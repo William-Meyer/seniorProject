@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+
+        <h1 id=title>Tic-Tac-Toe</h1>
+        <h1 id="anounce">Waiting for two players...</h1>
+        <div class="grid">
+          <div onclick="place(this)" id="a1" class="gridItem">
+            <h1></h1>
+          </div>
+          <div onclick="place(this)"  id="a2" class="gridItem">
+            <h1></h1>
+          </div>
+          <div onclick="place(this)"  id="a3" class="gridItem">
+            <h1></h1>
+          </div>
+          <div onclick="place(this)"  id="b1" class="gridItem">
+            <h1></h1>
+          </div>
+          <div onclick="place(this)"  id="b2" class="gridItem">
+            <h1></h1>
+          </div>
+          <div onclick="place(this)"  id="b3" class="gridItem">
+            <h1></h1>
+          </div>
+          <div onclick="place(this)"  id="c1" class="gridItem">
+            <h1></h1>
+          </div>
+          <div onclick="place(this)"  id="c2" class="gridItem">
+            <h1></h1>
+          </div>
+          <div onclick="place(this)"  id="c3" class="gridItem">
+            <h1></h1>
+          </div>
+        </div>
+        <button type="button" name="button" onclick="reset()">Reset Game</button>
+    <script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+  let customID = -1;
+  socket.on('giveID',function(id){
+    if(customID < 0){
+      customID = id;
+    }
+  });
+  socket.on('updateHeader',function(contents){
+    document.getElementById('anounce').innerHTML = contents;
+  });
+  function place(el){
+    socket.emit('place',[el.id,customID])
+  }
+  function reset(){
+    socket.emit('reset');
+  }
+  socket.on('startHeader',function(){
+    if(customID == 1){
+      document.getElementById('anounce').innerHTML = 'You are X';
+    }
+    else if(customID == 2){
+      document.getElementById('anounce').innerHTML = 'You are O';
+    }
+    else{
+      document.getElementById('anounce').innerHTML = 'Spectating';
+    }
+
+  });
+  socket.on('refresh',function(){
+    document. location. reload();
+  });
+  socket.on('turn',function(paramList){
+    turn = paramList[0];
+    color = paramList[1];
+    id = paramList[2];
+    document.getElementById(id).innerHTML = "<h1 class='"+color+"'>"+turn+"</h1>";
+  });
+  //socket.emit('message',value)
+  //socket.on('message',funtion(param){code});
+</script>
+  </body>
+</html>
