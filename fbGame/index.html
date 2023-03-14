@@ -8,7 +8,9 @@
     <h1 id="out">Test</h1>
     <canvas id="game-canvas" width="480" height="480">
       Please use a browser that supports HTML5 Canvas.
+      <img id = 'bR' src="bigRed.jpg" alt="">
     </canvas>
+
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
     var socket = io();
@@ -22,11 +24,12 @@
         this.src = src;
         this.img = document.createElement("img");
         this.img.src = src;
-        document.body.appendChild(this.img);
+
       }
       drawSprite(ctx){
         console.log(this.img.src + ' moving');
-        ctx.drawImage(this.img, 480, 480);
+
+        ctx.drawImage(document.getElementById("#bR"), 10, 10, 150, 180);
       }
     }
     socket.on('serverAlert',function(msg){
