@@ -9,7 +9,12 @@
     <canvas id="game-canvas" width="480" height="480">
       Please use a browser that supports HTML5 Canvas.
     </canvas>
+    <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
+    var socket = io();
+    socket.on('serverAlert',function(msg){
+      alert('Server Alert: ' + msg);
+    });
     (function(window) {
 "use strict";
 if (typeof window.performance.now === "undefined") {
@@ -22,6 +27,18 @@ if (typeof window.performance.now === "undefined") {
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
 // MIT license
+class Sprite{
+  constructor(x,y,scale,src){
+    this.x = x;
+    this.y = y;
+    this.scale = scale;
+    this.src = src;
+  }
+}
+function initGame(){
+//get all sprites from node
+//initiate front end sprites based on that info
+}
 (function(window) {
   var lastTime = 0;
   var vendors = ['ms', 'moz', 'webkit', 'o'];

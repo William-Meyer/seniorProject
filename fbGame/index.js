@@ -36,7 +36,15 @@ class Sprite{
 function masterUpdate(){
 
 }
-
+io.on('connection', (socket) => {
+  console.log('connection');
+  socket.emit('serverAlert','Hello World!');
+  socket.on('disconnect', () => {
+    io.sockets.emit('updateHeader',"A user as disconnected:Game Over")
+    win = true;
+    console.log('user disconnected');
+  });
+});
 server.listen(3000, () => {
   console.log('listening on *:3000');
 });
