@@ -36,7 +36,7 @@ class Sprite{
 }
 function initSprites(){
   spriteArray.push(new Sprite(0,0,1,'bigRed.jpg',36));
-  console.log('Sprites Made');
+  console.log('Sprites Made: '+spriteArray[0].src);
 }
 function masterUpdate(){
 
