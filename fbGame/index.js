@@ -10,6 +10,7 @@ app.get('/', (req, res) => {
 });
 let index = 0;
 const GRAV = 10;
+let spriteArray = []
 class Sprite{
    constructor(x,y,h,src,width){
      this.x=x;
@@ -33,12 +34,17 @@ class Sprite{
     vy -= g;
   }
 }
+function initSprites(){
+  spriteArray.push(new Sprite(0,0,1,'bigRed.jpg',36));
+  console.log('Sprites Made');
+}
 function masterUpdate(){
 
 }
 io.on('connection', (socket) => {
   console.log('connection');
   socket.emit('serverAlert','Hello World!');
+  socket.emit('updateClientSprites',spriteArray);
   socket.on('disconnect', () => {
     io.sockets.emit('updateHeader',"A user as disconnected:Game Over")
     win = true;
@@ -46,5 +52,6 @@ io.on('connection', (socket) => {
   });
 });
 server.listen(3000, () => {
+  initSprites();
   console.log('listening on *:3000');
 });

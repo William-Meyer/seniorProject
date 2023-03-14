@@ -12,8 +12,30 @@
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
     var socket = io();
+    let clientSprites = [];
+    const scaleConst =1;
+    class Sprite{
+      constructor(x,y,scale,src){
+        this.x = x;
+        this.y = y;
+        this.scale = scale;
+        this.src = src;
+        this.img = document.createElement("img");
+        img.src = src;
+        document.body.appendChild(img);
+      }
+      drawSprite(ctx){
+        ctx.drawImage(this.img, this.x, this.y);
+      }
+    }
     socket.on('serverAlert',function(msg){
       alert('Server Alert: ' + msg);
+    });
+    socket.on('updateClientSprites',function(list){
+      for(let i=0; i<list.length; i++){
+        clientSprites.push(new Sprite(list[i].x,list[i].y,scaleConst,list[i].src));
+        console.log(clientSprites);
+      }
     });
     (function(window) {
 "use strict";
@@ -27,14 +49,7 @@ if (typeof window.performance.now === "undefined") {
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
 // MIT license
-class Sprite{
-  constructor(x,y,scale,src){
-    this.x = x;
-    this.y = y;
-    this.scale = scale;
-    this.src = src;
-  }
-}
+
 function initGame(){
 //get all sprites from node
 //initiate front end sprites based on that info
@@ -84,7 +99,7 @@ var startTime = 0;
  */
 
 var update = function() {
-  //update loop logic here
+  clientSprites[0].drawSprite(ctx);
 };
 
 var display = function(lagOffset) {
