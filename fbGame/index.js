@@ -45,6 +45,9 @@ io.on('connection', (socket) => {
   console.log('connection');
   socket.emit('serverAlert','Hello World!');
   socket.emit('updateClientSprites',spriteArray);
+  socket.on('move',function(){
+    socket.emit('moveSprite',0,50,0);
+  });
   socket.on('disconnect', () => {
     io.sockets.emit('updateHeader',"A user as disconnected:Game Over")
     win = true;

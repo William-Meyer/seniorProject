@@ -4,11 +4,10 @@
     <title>Socket.IO chat</title>
     <link rel="stylesheet" href="index.css">
   </head>
-  <body>
-    <h1 id="out">Test</h1>
-    <canvas id="game-canvas" width="480" height="480">
+  <body id = "body">
+    <h1 id="out" onclick="update()">Test</h1>
+    <canvas id="canvas" width="480" height="480">
       Please use a browser that supports HTML5 Canvas.
-      <img id = 'bR' src="bigRed.jpg" alt="">
     </canvas>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -16,6 +15,10 @@
     var socket = io();
     let clientSprites = [];
     const scaleConst =1;
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "blue";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     class Sprite{
       constructor(x,y,scale,src){
         this.x = x;
@@ -24,32 +27,40 @@
         this.src = src;
         this.img = document.createElement("img");
         this.img.src = src;
-
+        //document.getElementById('body').appendChild(this.img);
       }
       drawSprite(ctx){
         console.log(this.img.src + ' moving');
 
-        ctx.drawImage(document.getElementById("#bR"), 10, 10, 150, 180);
+        ctx.drawImage(this.img, this.x, this.y);
       }
     }
     socket.on('serverAlert',function(msg){
       alert('Server Alert: ' + msg);
     });
+    function update(){
+      ctx.fillStyle = "blue";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      clientSprites[0].drawSprite(ctx);
+    }
     socket.on('updateClientSprites',function(list){
       for(let i=0; i<list.length; i++){
         alert('creating Sprites');
         clientSprites.push(new Sprite(list[i].x,list[i].y,scaleConst,list[i].src));
         console.log('client Sprites init: '+clientSprites);
+        clientSprites[i].drawSprite(ctx);
       }
     });
-    (function(window) {
-"use strict";
-if (typeof window.performance.now === "undefined") {
-  window.performance.now = (typeof Date.now === "undefined") ?
-    new Date().getTime() : Date.now();
-}
-})( window );
-
+    socket.on('moveSprite',function(index,dX,dY){
+      clientSprites[index].x = dX;
+      clientSprites[index].y = dY;
+      update();
+    });
+    document.onkeypress = function (e) {
+    e = e || window.event;
+    socket.emit('move')
+    // use e.keyCode
+};
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
@@ -59,110 +70,6 @@ function initGame(){
 //get all sprites from node
 //initiate front end sprites based on that info
 }
-(function(window) {
-  var lastTime = 0;
-  var vendors = ['ms', 'moz', 'webkit', 'o'];
-  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-      window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-      window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
-                                 || window[vendors[x]+'CancelRequestAnimationFrame'];
-  }
-
-  if (!window.requestAnimationFrame)
-      window.requestAnimationFrame = function(callback, element) {
-          var currTime = new Date().getTime();
-          var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-          var id = window.setTimeout(function() { callback(currTime + timeToCall); },
-            timeToCall);
-          lastTime = currTime + timeToCall;
-          return id;
-      };
-
-  if (!window.cancelAnimationFrame)
-      window.cancelAnimationFrame = function(id) {
-          clearTimeout(id);
-      };
-}( window ));
-
-
-(function(window) {
-"use strict";
-
-var canvas = document.getElementById("game-canvas");
-var ctx = canvas.getContext("2d");
-var canvasWidth = canvas.width;
-var canvasHeight = canvas.height;
-
-var fps = 15;
-var frameDuration = 1000 / fps;
-var lag = 0;
-var previous = 0;
-var startTime = 0;
-
-/**
- * just a simple sprite object for demonstration purposes
- */
-
-var update = function() {
-  if(clientSprites.length > 0){
-    clientSprites[0].drawSprite(ctx);
-  }
-
-
-};
-
-var display = function(lagOffset) {
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-  ctx.save();
-  ctx.restore();
-};
-
-var gameLoop = function() {
-  requestAnimationFrame(gameLoop);
-
-  // calculate the delta or elapsed time since the last frame
-  var now = window.performance.now();
-  var delta = now - previous;
-
-  // correct any unexpected huge gaps in the delta time
-  if (delta > 1000) {
-    delta = frameDuration;
-  }
-
-  // accumulate the lag counter
-  lag += delta;
-
-  // perform an update if the lag counter exceeds or is equal to
-  // the frame duration.
-  // this means we are updating at a Fixed time-step.
-  if (lag >= frameDuration) {
-    // capture sprites previous frame position
-
-    // update the game logic
-    update();
-
-    // reduce the lag counter by the frame duration
-    lag -= frameDuration;
-  }
-
-  // calculate the lag offset, this tells us how far we are
-  // into the next frame
-  var lagOffset = lag / frameDuration;
-
-  // display the sprites passing in the lagOffset to interpolate the
-  // sprites positions
-  display(lagOffset);
-
-  // set the current time to be used as the previous
-  // for the next frame
-  previous = now;
-};
-
-startTime = window.performance.now();
-gameLoop();
-
-})( window );
     </script>
   </body>
 </html>
