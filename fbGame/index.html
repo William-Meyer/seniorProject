@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="index.css">
   </head>
   <body id = "body">
-    <h1 id="out" onclick="update()">Test</h1>
+    <h1 id="out" onclick="start()">Test</h1>
     <canvas id="canvas" width="480" height="480">
       Please use a browser that supports HTML5 Canvas.
     </canvas>
@@ -52,14 +52,28 @@
     ctx.fillStyle = "blue";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     //--
-    var cam = new Camera(270,240)//init camera at the cords in params
+    var cam = new Camera(240,240)//init camera at the cords in params
     const scaleConst = 1;
+    let keyss = [];
     //--------------------------------------
     function update(){
       ctx.fillStyle = "blue";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       clientSprites[0].drawSprite(ctx);
     }
+    var keys = [];
+    window.addEventListener("keydown",
+      function(e){
+        keyss[e.keyCode] = true;
+        checkCombinations(e);
+    },
+    false);
+
+    window.addEventListener('keyup',
+      function(e){
+        keyss[e.keyCode] = false;
+    },
+    false);
     socket.on('updateClientSprites',function(list){
       for(let i=0; i<list.length; i++){
         alert('creating Sprites');
@@ -73,12 +87,15 @@
       clientSprites[index].y = dY;
       update();//NOTICE NEEDS TO CHANGE LATER !!RECURSION WARNIN!!
     });
+    socket.on('getKeys',function(){
+      socket.emit('setKeys',keyss);
+    });
     //will be cahnged into update loop
-    document.onkeypress = function (e) {
-    e = e || window.event;
-    socket.emit('move')
-    // use e.keyCode
-    };
+
+    function start(){
+      socket.emit('move');
+      update();
+    }
     </script>
   </body>
 </html>

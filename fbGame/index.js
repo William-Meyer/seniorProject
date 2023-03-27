@@ -12,7 +12,8 @@ app.get('/', (req, res) => {
 
 let index = 0;
 const GRAV = 10;
-let spriteArray = []
+let keyArray = [];
+let spriteArray = [];
 class Sprite{
    constructor(x,y,h,src,width){
      this.x=x;
@@ -34,6 +35,10 @@ class Sprite{
     y += vy;
     h += vy;
     vy -= g;
+    if(h<=1){
+      h = 1;
+      vy = 0;
+    }
   }
 }
 function initSprites(){
@@ -46,27 +51,50 @@ const hrtimeMs = function() {
     return time[0] * 1000 + time[1] / 1000000
 }
 
-const TICK_RATE = 1
+const TICK_RATE = 20
 let tick = 0
 let previous = hrtimeMs()
 let tickLengthMs = 1000 / TICK_RATE
-
+let movex = 0;
+let movey = 0;
 io.on('connection', (socket) => {
   console.log('connection');
   const loop = () => {
       setTimeout(loop, tickLengthMs)
       let now = hrtimeMs()
       let delta = (now - previous) / 1000
-      console.log('delta', delta)
-      socket.emit('moveSprite',0,50,0);
+      //console.log('delta', delta)
+      //game logic
+      socket.emit('getKeys');
+      //console.log(keyArray);
+      if(keyArray[68] == true){
+        movex+=3;
+        socket.emit('moveSprite',0,movex,movey);
+      }
+      if(keyArray[65] == true){
+        movex-=3;
+        socket.emit('moveSprite',0,movex,movey);
+      }
+      if(keyArray[87] == true){
+        movey-=3;
+        socket.emit('moveSprite',0,movex,movey);
+      }
+      if(keyArray[83] == true){
+        movey+=3;
+        socket.emit('moveSprite',0,movex,movey);
+      }
+      console.log('('+ movex + ', '+ movey + ')');
+      //game logic end
       previous = now
       tick++
   }
   socket.emit('serverAlert','Hello World!');
   socket.emit('updateClientSprites',spriteArray);
   socket.on('move',function(){
-    socket.emit('moveSprite',0,50,0);
     loop();
+  });
+  socket.on('setKeys', function(keys){
+    keyArray = keys;
   });
   socket.on('disconnect', () => {
     io.sockets.emit('updateHeader',"A user as disconnected:Game Over")
