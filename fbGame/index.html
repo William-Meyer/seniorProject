@@ -43,6 +43,7 @@
         ctx.drawImage(this.img, cam.width/2-cam.x+this.x, cam.height/2-cam.y+this.y);
       }
     }
+    //--------------------------------------
     //basic set up
     let clientSprites = [];//list to keep track of sprite info on the client end
     //--Setting up canvas
@@ -52,7 +53,8 @@
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     //--
     var cam = new Camera(270,240)//init camera at the cords in params
-
+    const scaleConst = 1;
+    //--------------------------------------
     function update(){
       ctx.fillStyle = "blue";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -71,7 +73,7 @@
       clientSprites[index].y = dY;
       update();//NOTICE NEEDS TO CHANGE LATER !!RECURSION WARNIN!!
     });
-    //will be cahnged into update loop 
+    //will be cahnged into update loop
     document.onkeypress = function (e) {
     e = e || window.event;
     socket.emit('move')
