@@ -55,17 +55,19 @@
     var cam = new Camera(240,240)//init camera at the cords in params
     const scaleConst = 1;
     let keyss = [];
+    let bgImg = document.createElement("img");
+    bgImg.source = "field.jpg";
     //--------------------------------------
     function update(){
       ctx.fillStyle = "blue";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      //ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(bgImg, 0, 0,3840,1640);
       clientSprites[0].drawSprite(ctx);
     }
     var keys = [];
     window.addEventListener("keydown",
       function(e){
         keyss[e.keyCode] = true;
-        checkCombinations(e);
     },
     false);
 
