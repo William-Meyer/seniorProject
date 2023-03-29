@@ -9,7 +9,7 @@
     <canvas id="canvas" width="480" height="480">
       Please use a browser that supports HTML5 Canvas.
     </canvas>
-
+    <img id = "bgImage" src="field.jpg" alt="">
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
     var socket = io();
@@ -49,19 +49,19 @@
     //--Setting up canvas
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
-    ctx.fillStyle = "blue";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
     //--
     var cam = new Camera(240,240)//init camera at the cords in params
     const scaleConst = 1;
     let keyss = [];
-    let bgImg = document.createElement("img");
-    bgImg.source = "field.jpg";
+    var bgImg = document.getElementById('bgImage');
     //--------------------------------------
     function update(){
-      ctx.fillStyle = "blue";
+
+      //ctx.fillStyle = "blue";
       //ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(bgImg, 0, 0,3840,1640);
+      cam.x = clientSprites[0].x;
+      cam.y = clientSprites[0].y;
+      ctx.drawImage(bgImg, cam.width/2-cam.x, cam.height/2-cam.y);
       clientSprites[0].drawSprite(ctx);
     }
     var keys = [];
