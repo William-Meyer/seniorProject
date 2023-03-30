@@ -20,11 +20,33 @@
 
     //game logic below
     class Camera{
-      constructor(x,y){
+      constructor(x,y, xMin, yMin, xMax, yMax){
         this.x =x;
         this.y = y;
         this.width = canvas.width;
         this.height = canvas.height;
+        this.xMin = xMin;
+        this.yMin = yMin;
+        this.xMax = xMax;
+        this.yMax = yMax;
+      }
+      setLoc(x,y){
+        this.x = x;
+        this.y = x;
+        if(this.x<this.xMin){
+          this.x = this.xMin;
+        }
+        if(this.x>this.xMax){
+          this.x = this.xMax;
+        }
+        if(this.y<this.yMin){
+          this.y = this.yMin;
+        }
+        if(this.y>this.yMax){
+          this.y = this.yMax;
+        }
+          //478, 340
+          //846, 2928
       }
     }
     class Sprite{
@@ -50,7 +72,9 @@
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
     //--
-    var cam = new Camera(240,240)//init camera at the cords in params
+    //478, 340
+    //846, 2928
+    var cam = new Camera(240,240,478,340,846,2928)//init camera at the cords in params
     const scaleConst = 1;
     let keyss = [];
     var bgImg = document.getElementById('bgImage');
@@ -59,8 +83,7 @@
 
       //ctx.fillStyle = "blue";
       //ctx.fillRect(0, 0, canvas.width, canvas.height);
-      cam.x = clientSprites[0].x;
-      cam.y = clientSprites[0].y;
+      cam.setLoc(clientSprites[0].x,clientSprites[0].y);
       ctx.drawImage(bgImg, cam.width/2-cam.x, cam.height/2-cam.y);
       clientSprites[0].drawSprite(ctx);
     }
