@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="index.css">
   </head>
   <body id = "body">
-    <h1 id="out" onclick="start()">Simulate 2nd player joining</h1>
+    <h1 id="out" onclick="start()">Waiting for 2 players...</h1>
     <canvas id="canvas" width="1200" height="675">
       Please use a browser that supports HTML5 Canvas.
     </canvas>
@@ -32,7 +32,7 @@
       }
       setLoc(x,y){
         this.x = x;
-        this.y = x;
+        this.y = y;
         if(this.x<this.xMin){
           this.x = this.xMin;
         }
@@ -45,6 +45,7 @@
         if(this.y>this.yMax){
           this.y = this.yMax;
         }
+        console.log('cam: '+this.x + ', '+this.y);
           //478, 340
           //846, 2928
       }
@@ -74,10 +75,11 @@
     //--
     //478, 340
     //846, 2928
-    var cam = new Camera(240,240,478,340,846,2928)//init camera at the cords in params
+    var cam = new Camera(240,240,610,340,846,2928)//init camera at the cords in params
     const scaleConst = 1;
     let keyss = [];
     var bgImg = document.getElementById('bgImage');
+    var playerId = 0;
     //--------------------------------------
     function update(){
 
@@ -87,6 +89,10 @@
       ctx.drawImage(bgImg, cam.width/2-cam.x, cam.height/2-cam.y);
       clientSprites[0].drawSprite(ctx);
     }
+    socket.on('playerId',function(id){
+      playerId = id;
+    });
+    socket.on('startGame',start());
     var keys = [];
     window.addEventListener("keydown",
       function(e){
@@ -105,6 +111,8 @@
         clientSprites.push(new Sprite(list[i].x,list[i].y,scaleConst,list[i].src));
         console.log('client Sprites init: '+clientSprites);
         clientSprites[i].drawSprite(ctx);
+        console.log('Ready...')
+        socket.emit('ready');
       }
     });
     socket.on('moveSprite',function(index,dX,dY){
@@ -118,6 +126,7 @@
     //will be cahnged into update loop
 
     function start(){
+      document.getElementById('out').innerHTML = 'Game has Started';
       socket.emit('move');
       update();
     }

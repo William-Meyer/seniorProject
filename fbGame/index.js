@@ -57,8 +57,16 @@ let previous = hrtimeMs()
 let tickLengthMs = 1000 / TICK_RATE
 let movex = 0;
 let movey = 0;
+let idI = 1;
+let gameLoop = false;
+let startTeam = 'none'
+let ready = 0;
 io.on('connection', (socket) => {
+  socket.emit('updateClientSprites',spriteArray);
   console.log('connection');
+  socket.emit('playerId',idI)
+  idI++;
+  console.log('idI: ' + idI);
   const loop = () => {
       setTimeout(loop, tickLengthMs)
       let now = hrtimeMs()
@@ -83,13 +91,31 @@ io.on('connection', (socket) => {
         movey+=3;
         socket.emit('moveSprite',0,movex,movey);
       }
-      console.log('('+ movex + ', '+ movey + ')');
+      //console.log('('+ movex + ', '+ movey + ')');
       //game logic end
       previous = now
       tick++
   }
   socket.emit('serverAlert','Hello World!');
-  socket.emit('updateClientSprites',spriteArray);
+  socket.on('ready',function(){
+    ready++;
+    if(idI == 3 && ready > 1){
+      //start game
+      console.log('gameStarting...');
+      socket.emit('startGame')
+      if(Math.floor(Math.random() * 1) == 1){
+        startTeam = 'blue';
+      }
+      else{
+        startTeam = 'red';
+      }
+      spriteArray.forEach(element => {
+        element.x = 500;
+        element.y = 1500;
+        socket.emit('moveSprite',0,element.x,element.y);
+      });
+    }
+  });
   socket.on('move',function(){
     loop();
   });
