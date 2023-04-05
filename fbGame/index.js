@@ -64,9 +64,9 @@ let ready = 0;
 io.on('connection', (socket) => {
   socket.emit('updateClientSprites',spriteArray);
   console.log('connection');
-  socket.emit('playerId',idI)
-  idI++;
+  socket.emit('playerId',idI);
   console.log('idI: ' + idI);
+    idI++;
   const loop = () => {
       setTimeout(loop, tickLengthMs)
       let now = hrtimeMs()

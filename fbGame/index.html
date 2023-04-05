@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="index.css">
   </head>
   <body id = "body">
-    <h1 id="out" onclick="start()">Waiting for 2 players...</h1>
+    <h1 id="out">Waiting for 2 players...</h1>
     <canvas id="canvas" width="1200" height="675">
       Please use a browser that supports HTML5 Canvas.
     </canvas>
@@ -126,6 +126,7 @@
     //will be cahnged into update loop
 
     function start(){
+      console.log('game starting')
       document.getElementById('out').innerHTML = 'Game has Started';
       socket.emit('move');
       update();
