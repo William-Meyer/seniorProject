@@ -55,8 +55,8 @@ const TICK_RATE = 20
 let tick = 0
 let previous = hrtimeMs()
 let tickLengthMs = 1000 / TICK_RATE
-let movex = 0;
-let movey = 0;
+let movex = 750;
+let movey = 2280;
 let idI = 1;
 let gameLoop = false;
 let startTeam = 'none'
@@ -102,7 +102,7 @@ io.on('connection', (socket) => {
     if(idI == 3 && ready > 1){
       //start game
       console.log('gameStarting...');
-      socket.emit('startGame')
+      io.emit('startGame')
       if(Math.floor(Math.random() * 1) == 1){
         startTeam = 'blue';
       }

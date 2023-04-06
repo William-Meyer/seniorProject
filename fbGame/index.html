@@ -92,7 +92,12 @@
     socket.on('playerId',function(id){
       playerId = id;
     });
-    socket.on('startGame',start());
+    socket.on('startGame',function(){
+      console.log('game starting')
+      document.getElementById('out').innerHTML = 'Game has Started';
+      socket.emit('move');
+      update();
+    });
     var keys = [];
     window.addEventListener("keydown",
       function(e){
@@ -118,6 +123,8 @@
     socket.on('moveSprite',function(index,dX,dY){
       clientSprites[index].x = dX;
       clientSprites[index].y = dY;
+      console.log(clientSprites[index].x);
+      console.log(clientSprites[index].y);
       update();//NOTICE NEEDS TO CHANGE LATER !!RECURSION WARNIN!!
     });
     socket.on('getKeys',function(){
