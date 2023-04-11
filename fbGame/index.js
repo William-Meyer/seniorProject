@@ -42,15 +42,30 @@ class Sprite{
   }
 }
 function initSprites(){
-  spriteArray.push(new Sprite(480,480,1,'bigRed.jpg',36));
-  console.log('Sprites Made: '+spriteArray[0].src);
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//qb
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//rb
 }
 
 const hrtimeMs = function() {
     let time = process.hrtime()
     return time[0] * 1000 + time[1] / 1000000
 }
-
+let rArray = [
+  [25,0],
+  [25,45],
+  [25,-45],
+  [25,90],
+  [25,-90],
+  [25,-135],
+  [25,135],
+  [10,-90],
+  [10,90],
+  [5,45],
+]
 const TICK_RATE = 20
 let tick = 0
 let previous = hrtimeMs()
@@ -61,6 +76,14 @@ let idI = 1;
 let gameLoop = false;
 let startTeam = 'none'
 let ready = 0;
+let pStartX = 750;
+let pStartY = 2280;
+let hiked = false;
+let r1 = [];
+let r2 = [];
+let r3 = [];
+let r4 = [];
+let playTick = 0;
 io.on('connection', (socket) => {
   socket.emit('updateClientSprites',spriteArray);
   console.log('connection');
@@ -74,22 +97,22 @@ io.on('connection', (socket) => {
       //console.log('delta', delta)
       //game logic
       socket.emit('getKeys');
+      if(keyArray[49] == true && !(hiked)){
+        hiked = true;
+        playTick = 0;
+        let r1 = rArray[Math.floor(Math.random() * rArray.length)];
+        let r2 = rArray[Math.floor(Math.random() * rArray.length)];
+        let r3 = rArray[Math.floor(Math.random() * rArray.length)];
+        let r4 = rArray[Math.floor(Math.random() * rArray.length)];
+      }
       //console.log(keyArray);
-      if(keyArray[68] == true){
-        movex+=3;
-        socket.emit('moveSprite',0,movex,movey);
-      }
-      if(keyArray[65] == true){
-        movex-=3;
-        socket.emit('moveSprite',0,movex,movey);
-      }
-      if(keyArray[87] == true){
-        movey-=3;
-        socket.emit('moveSprite',0,movex,movey);
-      }
-      if(keyArray[83] == true){
-        movey+=3;
-        socket.emit('moveSprite',0,movex,movey);
+      //if(keyArray[68] == true){
+      //  movex+=3;
+      //  socket.emit('moveSprite',0,movex,movey);
+      //}
+      if(hiked){
+
+        playTick++
       }
       //console.log('('+ movex + ', '+ movey + ')');
       //game logic end
@@ -103,17 +126,12 @@ io.on('connection', (socket) => {
       //start game
       console.log('gameStarting...');
       io.emit('startGame')
-      if(Math.floor(Math.random() * 1) == 1){
-        startTeam = 'blue';
-      }
-      else{
-        startTeam = 'red';
-      }
-      spriteArray.forEach(element => {
-        element.x = 500;
-        element.y = 1500;
-        socket.emit('moveSprite',0,element.x,element.y);
-      });
+      socket.emit('moveSprite',0,pStartX,pStartY + 100);
+      socket.emit('moveSprite',1,pStartX - 300,pStartY);
+      socket.emit('moveSprite',2,pStartX - 150,pStartY + 25);
+      socket.emit('moveSprite',3,pStartX + 150,pStartY);
+      socket.emit('moveSprite',4,pStartX + 300,pStartY);
+      socket.emit('moveSprite',5,pStartX + 50,pStartY + 100);
     }
   });
   socket.on('move',function(){

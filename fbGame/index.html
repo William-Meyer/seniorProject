@@ -87,7 +87,10 @@
       //ctx.fillRect(0, 0, canvas.width, canvas.height);
       cam.setLoc(clientSprites[0].x,clientSprites[0].y);
       ctx.drawImage(bgImg, cam.width/2-cam.x, cam.height/2-cam.y);
-      clientSprites[0].drawSprite(ctx);
+      for( let i = 0; i < clientSprites.length; i++){
+        clientSprites[i].drawSprite(ctx);
+      }
+
     }
     socket.on('playerId',function(id){
       playerId = id;
