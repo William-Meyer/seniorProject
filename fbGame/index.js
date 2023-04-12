@@ -49,22 +49,57 @@ function initSprites(){
   spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
   spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//rb
 }
+function runRoute(obj, route, tick, speed){
+  console.log('play tick: ' + tick)
+  let dy = 0;
+  let dx = 0;
+  if(tick<route[0]){
+    dy = speed;
+  }
+  else if(route[1] == 45){
+    dy = speed;
+    dx = speed;
+  }
+  else if(route[1] == -45){
+    dy = speed;
+    dx = -(speed);
+  }
+  else if(route[1] == 135){
+    dy = -(speed);
+    dx = speed;
+  }
+  else if(route[1] == -135){
+    dy = -(speed);
+    dx = -(speed);
+  }
+  else if(route[1] == 90){
+    dy = 0;
+    dx = speed;
+  }
+  else if(route[1] == -90){
+    dy = 0;
+    dx = -speed;
+  }
+  console.log('cords: '+dx+ ', '+dy);
+  return[dx,dy];
+
+}
 
 const hrtimeMs = function() {
     let time = process.hrtime()
     return time[0] * 1000 + time[1] / 1000000
 }
 let rArray = [
-  [25,0],
-  [25,45],
-  [25,-45],
-  [25,90],
-  [25,-90],
-  [25,-135],
-  [25,135],
-  [10,-90],
-  [10,90],
-  [5,45],
+  [800,0],
+  [800,45],
+  [800,-45],
+  [800,90],
+  [800,-90],
+  [800,-135],
+  [800,135],
+  [400,-90],
+  [400,90],
+  [400,45],
 ]
 const TICK_RATE = 20
 let tick = 0
@@ -83,6 +118,7 @@ let r1 = [];
 let r2 = [];
 let r3 = [];
 let r4 = [];
+let routes  =[];
 let playTick = 0;
 io.on('connection', (socket) => {
   socket.emit('updateClientSprites',spriteArray);
@@ -97,13 +133,15 @@ io.on('connection', (socket) => {
       //console.log('delta', delta)
       //game logic
       socket.emit('getKeys');
-      if(keyArray[49] == true && !(hiked)){
+      if(keyArray[68] == true && !(hiked)){
+        console.log('snapped')
         hiked = true;
         playTick = 0;
         let r1 = rArray[Math.floor(Math.random() * rArray.length)];
         let r2 = rArray[Math.floor(Math.random() * rArray.length)];
         let r3 = rArray[Math.floor(Math.random() * rArray.length)];
         let r4 = rArray[Math.floor(Math.random() * rArray.length)];
+        routes = [r1,r2,r3,r4]
       }
       //console.log(keyArray);
       //if(keyArray[68] == true){
@@ -111,7 +149,10 @@ io.on('connection', (socket) => {
       //  socket.emit('moveSprite',0,movex,movey);
       //}
       if(hiked){
-
+        for(i = 1; i < 5; i++){
+          let newPos = runRoute(spriteArray[i],routes[i-1],playTick,5);
+          socket.emit('moveSprite',i,spriteArray[i].x + newPos[0],spriteArray[i].y+newPos[1]);
+        }
         playTick++
       }
       //console.log('('+ movex + ', '+ movey + ')');
@@ -132,6 +173,18 @@ io.on('connection', (socket) => {
       socket.emit('moveSprite',3,pStartX + 150,pStartY);
       socket.emit('moveSprite',4,pStartX + 300,pStartY);
       socket.emit('moveSprite',5,pStartX + 50,pStartY + 100);
+      spriteArray[0].x = pStartX;
+      spriteArray[1].x = pStartX - 300;
+      spriteArray[2].x = pStartX - 150;
+      spriteArray[3].x = pStartX + 150;
+      spriteArray[4].x = pStartX + 300;
+      spriteArray[5].x = pStartX + 50;
+      spriteArray[0].y = pStartY + 100;
+      spriteArray[1].y = pStartY + 0;
+      spriteArray[2].y = pStartY - 25;
+      spriteArray[3].y = pStartY + 0;
+      spriteArray[4].y = pStartY + 0;
+      spriteArray[5].y = pStartY + 100;
     }
   });
   socket.on('move',function(){
