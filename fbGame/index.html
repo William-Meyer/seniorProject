@@ -45,7 +45,6 @@
         if(this.y>this.yMax){
           this.y = this.yMax;
         }
-        console.log('cam: '+this.x + ', '+this.y);
           //478, 340
           //846, 2928
       }
@@ -61,7 +60,6 @@
         //document.getElementById('body').appendChild(this.img);
       }
       drawSprite(ctx){
-        console.log(this.img.src + ' moving');
 
         ctx.drawImage(this.img, cam.width/2-cam.x+this.x, cam.height/2-cam.y+this.y);
       }
@@ -126,8 +124,12 @@
     socket.on('moveSprite',function(index,dX,dY){
       clientSprites[index].x = dX;
       clientSprites[index].y = dY;
-      console.log(clientSprites[index].x);
-      console.log(clientSprites[index].y);
+      if(index == 0){
+        console.log('X: ' + dX);
+        console.log('Y: ' + dY);
+        console.log(clientSprites[index].x);
+        console.log(clientSprites[index].y);
+      }
       update();//NOTICE NEEDS TO CHANGE LATER !!RECURSION WARNIN!!
     });
     socket.on('getKeys',function(){

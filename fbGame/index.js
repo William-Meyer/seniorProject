@@ -48,6 +48,7 @@ function initSprites(){
   spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
   spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
   spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//rb
+  spriteArray.push(new Sprite(480,480,1,'ball.jpg',16));//ball
 }
 function runRoute(obj, route, tick, speed){
   console.log('play tick: ' + tick)
@@ -80,8 +81,7 @@ function runRoute(obj, route, tick, speed){
     dy = 0;
     dx = -speed;
   }
-  console.log('cords: '+dx+ ', '+dy);
-  return[dx,dy];
+  return[dx,-dy];
 
 }
 
@@ -90,18 +90,18 @@ const hrtimeMs = function() {
     return time[0] * 1000 + time[1] / 1000000
 }
 let rArray = [
-  [800,0],
-  [800,45],
-  [800,-45],
-  [800,90],
-  [800,-90],
-  [800,-135],
-  [800,135],
-  [400,-90],
-  [400,90],
-  [400,45],
+  [80,0],
+  [80,45],
+  [80,-45],
+  [80,90],
+  [80,-90],
+  [80,-135],
+  [80,135],
+  [40,-90],
+  [40,90],
+  [40,45],
 ]
-const TICK_RATE = 20
+const TICK_RATE = 10;
 let tick = 0
 let previous = hrtimeMs()
 let tickLengthMs = 1000 / TICK_RATE
@@ -149,9 +149,16 @@ io.on('connection', (socket) => {
       //  socket.emit('moveSprite',0,movex,movey);
       //}
       if(hiked){
+        socket.emit('moveSprite',0,spriteArray[0].x, spriteArray[0].y + 5)
         for(i = 1; i < 5; i++){
-          let newPos = runRoute(spriteArray[i],routes[i-1],playTick,5);
+          let newPos = runRoute(spriteArray[i],routes[i-1],playTick,1);
           socket.emit('moveSprite',i,spriteArray[i].x + newPos[0],spriteArray[i].y+newPos[1]);
+          spriteArray[i].x += newPos[0];
+          spriteArray[i].y += newPos[1];
+
+        }
+        if(playTick%TICK_RATE == 0){
+          console.log('Second');
         }
         playTick++
       }
