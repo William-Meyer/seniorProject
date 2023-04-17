@@ -6,7 +6,7 @@
   </head>
   <body id = "body">
     <h1 id="out">Waiting for 2 players...</h1>
-    <canvas id="canvas" width="1200" height="675">
+    <canvas onClick = "cClicked(event)" id="canvas" width="1200" height="675">
       Please use a browser that supports HTML5 Canvas.
     </canvas>
     <img id = "bgImage" src="field2.jpg" alt="">
@@ -83,7 +83,7 @@
 
       //ctx.fillStyle = "blue";
       //ctx.fillRect(0, 0, canvas.width, canvas.height);
-      cam.setLoc(clientSprites[0].x,clientSprites[0].y);
+      cam.setLoc(clientSprites[0].x,clientSprites[0].y-200);
       ctx.drawImage(bgImg, cam.width/2-cam.x, cam.height/2-cam.y);
       for( let i = 0; i < clientSprites.length; i++){
         clientSprites[i].drawSprite(ctx);
@@ -100,6 +100,11 @@
       update();
     });
     var keys = [];
+    function cClicked(evt){
+      var rect = canvas.getBoundingClientRect();
+      console.log(evt.clientX - rect.left);
+      console.log(evt.clientY - rect.top);
+    }
     window.addEventListener("keydown",
       function(e){
         keyss[e.keyCode] = true;
@@ -113,7 +118,6 @@
     false);
     socket.on('updateClientSprites',function(list){
       for(let i=0; i<list.length; i++){
-        alert('creating Sprites');
         clientSprites.push(new Sprite(list[i].x,list[i].y,scaleConst,list[i].src));
         console.log('client Sprites init: '+clientSprites);
         clientSprites[i].drawSprite(ctx);

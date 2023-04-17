@@ -90,18 +90,18 @@ const hrtimeMs = function() {
     return time[0] * 1000 + time[1] / 1000000
 }
 let rArray = [
-  [80,0],
-  [80,45],
-  [80,-45],
-  [80,90],
-  [80,-90],
-  [80,-135],
-  [80,135],
-  [40,-90],
-  [40,90],
-  [40,45],
+  [220,0],
+  [220,45],
+  [220,-45],
+  [220,90],
+  [220,-90],
+  [220,-135],
+  [220,135],
+  [220,-90],
+  [220,90],
+  [220,45],
 ]
-const TICK_RATE = 10;
+const TICK_RATE = 20;
 let tick = 0
 let previous = hrtimeMs()
 let tickLengthMs = 1000 / TICK_RATE
@@ -151,7 +151,7 @@ io.on('connection', (socket) => {
       if(hiked){
         socket.emit('moveSprite',0,spriteArray[0].x, spriteArray[0].y + 5)
         for(i = 1; i < 5; i++){
-          let newPos = runRoute(spriteArray[i],routes[i-1],playTick,1);
+          let newPos = runRoute(spriteArray[i],routes[i-1],playTick,0.15);
           socket.emit('moveSprite',i,spriteArray[i].x + newPos[0],spriteArray[i].y+newPos[1]);
           spriteArray[i].x += newPos[0];
           spriteArray[i].y += newPos[1];
