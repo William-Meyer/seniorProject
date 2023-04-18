@@ -83,12 +83,11 @@
 
       //ctx.fillStyle = "blue";
       //ctx.fillRect(0, 0, canvas.width, canvas.height);
-      cam.setLoc(clientSprites[0].x,clientSprites[0].y-200);
       ctx.drawImage(bgImg, cam.width/2-cam.x, cam.height/2-cam.y);
       for( let i = 0; i < clientSprites.length; i++){
         clientSprites[i].drawSprite(ctx);
       }
-
+      cam.setLoc(clientSprites[6].x,clientSprites[6].y)
     }
     socket.on('playerId',function(id){
       playerId = id;
@@ -104,6 +103,7 @@
       var rect = canvas.getBoundingClientRect();
       console.log(evt.clientX - rect.left);
       console.log(evt.clientY - rect.top);
+      socket.emit('cClicked',evt.clientX - rect.left,evt.clientY - rect.top)
     }
     window.addEventListener("keydown",
       function(e){

@@ -50,8 +50,26 @@ function initSprites(){
   spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//rb
   spriteArray.push(new Sprite(480,480,1,'ball.jpg',16));//ball
 }
+function moveToTarget(x,y,targetX,targetY,speed){
+  deltaX = Math.abs(x-targetX);
+  deltaY = Math.abs(y-targetY);
+  theta = Math.atan(deltaX/deltaY)
+  dX = Math.cos(theta)*speed;
+  dY = Math.cos(theta)*speed;
+  if(targetX < x){
+    dX = dX * -1;
+  }
+  if(targetY < y){
+    dY = dY * -1;
+  }
+  console.log(dX);
+  console.log(dY);
+  return{
+    x:dX,
+    y:dY
+  }
+}
 function runRoute(obj, route, tick, speed){
-  console.log('play tick: ' + tick)
   let dy = 0;
   let dx = 0;
   if(tick<route[0]){
@@ -120,6 +138,12 @@ let r3 = [];
 let r4 = [];
 let routes  =[];
 let playTick = 0;
+let firstClick = false;
+let clickX = 0;
+let clickY = 0;
+let qbIX = 0;
+let qbIY = 0;
+let loopStart = false;
 io.on('connection', (socket) => {
   socket.emit('updateClientSprites',spriteArray);
   console.log('connection');
@@ -132,6 +156,13 @@ io.on('connection', (socket) => {
       let delta = (now - previous) / 1000
       //console.log('delta', delta)
       //game logic
+      if(loopStart == false){
+        loopStart = true;
+        console.log('init in loop')
+        socket.emit('moveSprite',5,pStartX + 50,pStartY + 100);
+        spriteArray[5].x = pStartX + 50;
+        spriteArray[5].y = pStartY + 100;
+      }
       socket.emit('getKeys');
       if(keyArray[68] == true && !(hiked)){
         console.log('snapped')
@@ -155,10 +186,27 @@ io.on('connection', (socket) => {
           socket.emit('moveSprite',i,spriteArray[i].x + newPos[0],spriteArray[i].y+newPos[1]);
           spriteArray[i].x += newPos[0];
           spriteArray[i].y += newPos[1];
-
         }
-        if(playTick%TICK_RATE == 0){
-          console.log('Second');
+        if(firstClick){
+          let tX = 0;
+          let tY = 0;
+          let qX = spriteArray[0].x
+          let qY = spriteArray[0].y
+          if(clickX > qX){
+            tX = qX - (clickX - qX);
+          }
+          else{
+            tX = qX+(qX - clickX);
+          }
+          if(clickY > qY){
+            tY = qy - (clickY - qY);
+          }
+          else{
+            tY = qY+(qY - clickY);
+          }
+          socket.emit('moveSprite',6,spriteArray[6].x + moveToTarget(qX,qY,tX,tY,0.01).x,spriteArray[6].y+moveToTarget(qX,qY,tX,tY,0.01).y);
+          spriteArray[6].x += moveToTarget(qX,qY,tX,tY,0.1).x;
+          spriteArray[6].y += moveToTarget(qX,qY,tX,tY,0.1).y;
         }
         playTick++
       }
@@ -168,6 +216,14 @@ io.on('connection', (socket) => {
       tick++
   }
   socket.emit('serverAlert','Hello World!');
+  socket.on('cClicked',function(x,y){
+    if(!firstClick && hiked){
+      clickX = x;
+      clickY = y;
+      firstClick = true;
+    }
+
+  });
   socket.on('ready',function(){
     ready++;
     if(idI == 3 && ready > 1){
@@ -180,18 +236,21 @@ io.on('connection', (socket) => {
       socket.emit('moveSprite',3,pStartX + 150,pStartY);
       socket.emit('moveSprite',4,pStartX + 300,pStartY);
       socket.emit('moveSprite',5,pStartX + 50,pStartY + 100);
+      socket.emit('moveSprite',6,pStartX,pStartY + 100);
       spriteArray[0].x = pStartX;
       spriteArray[1].x = pStartX - 300;
       spriteArray[2].x = pStartX - 150;
       spriteArray[3].x = pStartX + 150;
       spriteArray[4].x = pStartX + 300;
       spriteArray[5].x = pStartX + 50;
+      spriteArray[6].x = pStartX;
       spriteArray[0].y = pStartY + 100;
       spriteArray[1].y = pStartY + 0;
       spriteArray[2].y = pStartY - 25;
       spriteArray[3].y = pStartY + 0;
       spriteArray[4].y = pStartY + 0;
       spriteArray[5].y = pStartY + 100;
+      spriteArray[6].y = pStartY + 100;
     }
   });
   socket.on('move',function(){
