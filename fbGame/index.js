@@ -204,9 +204,9 @@ io.on('connection', (socket) => {
           else{
             tY = qY+(qY - clickY);
           }
-          socket.emit('moveSprite',6,spriteArray[6].x + moveToTarget(qX,qY,tX,tY,0.01).x,spriteArray[6].y+moveToTarget(qX,qY,tX,tY,0.01).y);
-          spriteArray[6].x += moveToTarget(qX,qY,tX,tY,0.1).x;
-          spriteArray[6].y += moveToTarget(qX,qY,tX,tY,0.1).y;
+          socket.emit('moveSprite',6,spriteArray[6].x + moveToTarget(qX,qY,tX,tY,0.5).x,spriteArray[6].y+moveToTarget(qX,qY,tX,tY,0.5).y);
+          spriteArray[6].x += moveToTarget(qX,qY,tX,tY,0.5).x;
+          spriteArray[6].y += moveToTarget(qX,qY,tX,tY,0.5).y;
         }
         playTick++
       }

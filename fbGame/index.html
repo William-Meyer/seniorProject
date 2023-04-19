@@ -101,8 +101,6 @@
     var keys = [];
     function cClicked(evt){
       var rect = canvas.getBoundingClientRect();
-      console.log(evt.clientX - rect.left);
-      console.log(evt.clientY - rect.top);
       socket.emit('cClicked',evt.clientX - rect.left,evt.clientY - rect.top)
     }
     window.addEventListener("keydown",
@@ -128,7 +126,8 @@
     socket.on('moveSprite',function(index,dX,dY){
       clientSprites[index].x = dX;
       clientSprites[index].y = dY;
-      if(index == 0){
+      if(index == 6){
+        console.log('index: ' + index);
         console.log('X: ' + dX);
         console.log('Y: ' + dY);
         console.log(clientSprites[index].x);
