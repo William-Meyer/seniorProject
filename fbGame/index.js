@@ -53,17 +53,20 @@ function initSprites(){
 function moveToTarget(x,y,targetX,targetY,speed){
   deltaX = Math.abs(x-targetX);
   deltaY = Math.abs(y-targetY);
-  theta = Math.atan(deltaX/deltaY)
+  console.log('x: ' + deltaX);
+  console.log('y: ' + deltaY);
+  theta = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+  console.log('theta: '+ theta);
   dX = Math.cos(theta)*speed;
   dY = Math.cos(theta)*speed;
   if(targetX < x){
     dX = dX * -1;
   }
-  if(targetY < y){
+  if(targetY > y){
     dY = dY * -1;
   }
-  console.log(dX);
-  console.log(dY);
+  //console.log(dX);
+  //console.log(dY);
   return{
     x:dX,
     y:dY
