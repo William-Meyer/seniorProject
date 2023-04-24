@@ -59,11 +59,11 @@ function moveToTarget(x,y,targetX,targetY,speed){
   console.log('theta: '+ theta);
   dX = Math.cos(theta)*speed;
   dY = Math.cos(theta)*speed;
-  if(targetX < x){
-    dX = dX * -1;
+  if(targetX > x){
+    dX -= 2*dX;
   }
   if(targetY > y){
-    dY = dY * -1;
+    dY -= 2*dY;
   }
   //console.log(dX);
   //console.log(dY);
@@ -202,7 +202,7 @@ io.on('connection', (socket) => {
             tX = qX+(qX - clickX);
           }
           if(clickY > qY){
-            tY = qy - (clickY - qY);
+            tY = qY - (clickY - qY);
           }
           else{
             tY = qY+(qY - clickY);

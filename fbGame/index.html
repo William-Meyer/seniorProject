@@ -48,6 +48,18 @@
           //478, 340
           //846, 2928
       }
+      getX(){
+        return this.x;
+      }
+      getY(){
+        return this.y;
+      }
+      getWidth(){
+        return this.width;
+      }
+      getHeight(){
+        return this.height;
+      }
     }
     class Sprite{
       constructor(x,y,scale,src){
@@ -101,7 +113,11 @@
     var keys = [];
     function cClicked(evt){
       var rect = canvas.getBoundingClientRect();
-      socket.emit('cClicked',evt.clientX - rect.left,evt.clientY - rect.top)
+      console.log(cam.getX());
+      console.log(evt.clientY - rect.top + (cam.y - cam.wdth/2));
+      console.log(evt.clientX - rect.left);
+      console.log(evt.clientY - rect.top);
+      socket.emit('cClicked',evt.clientX - rect.left + (cam.getX() - cam.getWidth()/2),evt.clientY - rect.top + (cam.getY() - cam.getHeight()/2))
     }
     window.addEventListener("keydown",
       function(e){
@@ -126,13 +142,6 @@
     socket.on('moveSprite',function(index,dX,dY){
       clientSprites[index].x = dX;
       clientSprites[index].y = dY;
-      if(index == 6){
-        console.log('index: ' + index);
-        console.log('X: ' + dX);
-        console.log('Y: ' + dY);
-        console.log(clientSprites[index].x);
-        console.log(clientSprites[index].y);
-      }
       update();//NOTICE NEEDS TO CHANGE LATER !!RECURSION WARNIN!!
     });
     socket.on('getKeys',function(){
