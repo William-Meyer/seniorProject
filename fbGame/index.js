@@ -40,6 +40,9 @@ class Sprite{
       vy = 0;
     }
   }
+  isColliding(x1,y1){
+    return(x1 < this.x && x1>this.x-this.width)&&(y1<this.y && y1>this.y-this.height)
+  }
 }
 function initSprites(){
   spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//qb
@@ -55,14 +58,17 @@ function moveToTarget(x,y,targetX,targetY,speed){
   deltaY = Math.abs(y-targetY);
   console.log('x: ' + deltaX);
   console.log('y: ' + deltaY);
-  theta = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+  //theta = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+  theta = Math.atan2(deltaY, deltaX);
   console.log('theta: '+ theta);
   dX = Math.cos(theta)*speed;
-  dY = Math.cos(theta)*speed;
-  if(targetX > x){
+  dY = Math.sin(theta)*speed;
+  console.log('dx: ' + dX);
+  console.log('dy: ' + dY);
+  if(targetX < x){
     dX -= 2*dX;
   }
-  if(targetY > y){
+  if(targetY < y){
     dY -= 2*dY;
   }
   //console.log(dX);
@@ -147,6 +153,8 @@ let clickY = 0;
 let qbIX = 0;
 let qbIY = 0;
 let loopStart = false;
+let ballCatch = false;
+let ballReciever = -1;
 io.on('connection', (socket) => {
   socket.emit('updateClientSprites',spriteArray);
   console.log('connection');
@@ -191,25 +199,40 @@ io.on('connection', (socket) => {
           spriteArray[i].y += newPos[1];
         }
         if(firstClick){
-          let tX = 0;
-          let tY = 0;
-          let qX = spriteArray[0].x
-          let qY = spriteArray[0].y
-          if(clickX > qX){
-            tX = qX - (clickX - qX);
+          if(!ballCatch){
+            let tX = 0;
+            let tY = 0;
+            let qX = spriteArray[0].x
+            let qY = spriteArray[0].y
+            if(clickX > qX){
+              tX = qX - (clickX - qX);
+            }
+            else{
+              tX = qX+(qX - clickX);
+            }
+            if(clickY > qY){
+              tY = qY - (clickY - qY);
+            }
+            else{
+              tY = qY+(qY - clickY);
+            }
+            socket.emit('moveSprite',6,spriteArray[6].x + moveToTarget(qX,qY,tX,tY,.8).x,spriteArray[6].y+moveToTarget(qX,qY,tX,tY,0.8).y);
+            spriteArray[6].x += moveToTarget(qX,qY,tX,tY,0.8).x;
+            spriteArray[6].y += moveToTarget(qX,qY,tX,tY,0.8).y;
+            for(let i = 1; i < 5; i++){
+
+              if(spriteArray[i].isColliding(spriteArray[6].x,spriteArray.y)){
+                ballCatch = true;
+                ballReciever = 3;
+                break;
+              }
+            }
           }
           else{
-            tX = qX+(qX - clickX);
+            socket.emit('moveSprite',6,spriteArray[ballReciever].x,spriteArray[ballReciever].y);
+            spriteArray[6].x += spriteArray[ballReciever].x;
+            spriteArray[6].y += spriteArray[ballReciever].y;
           }
-          if(clickY > qY){
-            tY = qY - (clickY - qY);
-          }
-          else{
-            tY = qY+(qY - clickY);
-          }
-          socket.emit('moveSprite',6,spriteArray[6].x + moveToTarget(qX,qY,tX,tY,0.5).x,spriteArray[6].y+moveToTarget(qX,qY,tX,tY,0.5).y);
-          spriteArray[6].x += moveToTarget(qX,qY,tX,tY,0.5).x;
-          spriteArray[6].y += moveToTarget(qX,qY,tX,tY,0.5).y;
         }
         playTick++
       }
