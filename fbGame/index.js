@@ -41,7 +41,10 @@ class Sprite{
     }
   }
   isColliding(x1,y1){
-    return(x1 < this.x && x1>this.x-this.width)&&(y1<this.y && y1>this.y-this.height)
+    console.log('-----------------------------------------')
+    console.log(x1 > this.x && x1<this.x+this.width);
+    console.log(y1<this.y && y1>this.y-this.height);
+    return(x1 > this.x && x1<this.x-this.width)&&(y1<this.y && y1>this.y-this.height);
   }
 }
 function initSprites(){
@@ -56,15 +59,10 @@ function initSprites(){
 function moveToTarget(x,y,targetX,targetY,speed){
   deltaX = Math.abs(x-targetX);
   deltaY = Math.abs(y-targetY);
-  console.log('x: ' + deltaX);
-  console.log('y: ' + deltaY);
   //theta = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
   theta = Math.atan2(deltaY, deltaX);
-  console.log('theta: '+ theta);
   dX = Math.cos(theta)*speed;
   dY = Math.sin(theta)*speed;
-  console.log('dx: ' + dX);
-  console.log('dy: ' + dY);
   if(targetX < x){
     dX -= 2*dX;
   }
@@ -221,9 +219,9 @@ io.on('connection', (socket) => {
             spriteArray[6].y += moveToTarget(qX,qY,tX,tY,0.8).y;
             for(let i = 1; i < 5; i++){
 
-              if(spriteArray[i].isColliding(spriteArray[6].x,spriteArray.y)){
+              if(spriteArray[i].isColliding(spriteArray[6].x,spriteArray[6].y)){
                 ballCatch = true;
-                ballReciever = 3;
+                ballReciever = i;
                 break;
               }
             }
