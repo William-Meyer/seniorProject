@@ -31,6 +31,7 @@ class Sprite{
      this.rot = 0;
   }
   update(){
+
     x += vx;
     y += vy;
     h += vy;
@@ -40,11 +41,8 @@ class Sprite{
       vy = 0;
     }
   }
-  isColliding(x1,y1){
-    console.log('-----------------------------------------')
-    console.log(x1 > this.x && x1<this.x+this.width);
-    console.log(y1<this.y && y1>this.y-this.height);
-    return(x1 > this.x && x1<this.x-this.width)&&(y1<this.y && y1>this.y-this.height);
+  isColliding(x1,y1,sw,sh){
+    return(x1+sw > this.x  && x1<this.x+this.w)&&(y1<this.y && y1-sh>this.y-this.l);
   }
 }
 function initSprites(){
@@ -191,10 +189,17 @@ io.on('connection', (socket) => {
       if(hiked){
         socket.emit('moveSprite',0,spriteArray[0].x, spriteArray[0].y + 5)
         for(i = 1; i < 5; i++){
-          let newPos = runRoute(spriteArray[i],routes[i-1],playTick,0.15);
-          socket.emit('moveSprite',i,spriteArray[i].x + newPos[0],spriteArray[i].y+newPos[1]);
-          spriteArray[i].x += newPos[0];
-          spriteArray[i].y += newPos[1];
+          if(!ballCatch){
+            let newPos = runRoute(spriteArray[i],routes[i-1],playTick,0.15);
+            socket.emit('moveSprite',i,spriteArray[i].x + newPos[0],spriteArray[i].y+newPos[1]);
+            spriteArray[i].x += newPos[0];
+            spriteArray[i].y += newPos[1];
+          }
+          else{
+            spriteArray[i].y -= 0.15;
+            socket.emit('moveSprite',i,spriteArray[i].x,spriteArray[i].y);
+          }
+
         }
         if(firstClick){
           if(!ballCatch){
@@ -219,7 +224,7 @@ io.on('connection', (socket) => {
             spriteArray[6].y += moveToTarget(qX,qY,tX,tY,0.8).y;
             for(let i = 1; i < 5; i++){
 
-              if(spriteArray[i].isColliding(spriteArray[6].x,spriteArray[6].y)){
+              if(spriteArray[i].isColliding(spriteArray[6].x,spriteArray[6].y,16,16)){
                 ballCatch = true;
                 ballReciever = i;
                 break;
