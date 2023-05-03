@@ -46,23 +46,27 @@ class Sprite{
   }
 }
 function initSprites(){
-  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//qb
-  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
-  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
-  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
-  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr
-  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//rb
-  spriteArray.push(new Sprite(480,480,1,'ball.jpg',16));//ball
-  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//cb1
-  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//cb2
-  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//cb3
-  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//cb4
-  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//s1
-  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//s2
-  spriteArray.push(new Sprite(480,480,1,'bigBlue.jpg',36));//lb1
-  spriteArray.push(new Sprite(480,480,1,'bigBlue.jpg',36));//lb2
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//qb0
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr1
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr2
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr3
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//wr4
+  spriteArray.push(new Sprite(480,480,1,'redPlayer.jpg',36));//rb5
+  spriteArray.push(new Sprite(480,480,1,'ball.jpg',16));//ball6
+  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//cb1 7
+  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//cb2 8
+  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//cb3 9
+  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//cb4 10
+  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//s1 11
+  spriteArray.push(new Sprite(480,480,1,'bluePlayer.jpg',36));//s2 12
+  spriteArray.push(new Sprite(480,480,1,'bigBlue.jpg',36));//lb1 13
+  spriteArray.push(new Sprite(480,480,1,'bigBlue.jpg',36));//lb2 14
 }
 function moveToTarget(x,y,targetX,targetY,speed){
+  x = Math.floor(x);
+  y = Math.floor(y);
+  targetX = Math.floor(targetX);
+  targetY = Math.floor(targetY);
   deltaX = Math.abs(x-targetX);
   deltaY = Math.abs(y-targetY);
   //theta = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
@@ -75,8 +79,8 @@ function moveToTarget(x,y,targetX,targetY,speed){
   if(targetY < y){
     dY -= 2*dY;
   }
-  //console.log(dX);
-  //console.log(dY);
+  console.log(dX);
+  console.log(dY);
   return{
     x:dX,
     y:dY
@@ -159,6 +163,8 @@ let qbIY = 0;
 let loopStart = false;
 let ballCatch = false;
 let ballReciever = -1;
+let wr1 = 0;
+let wr2 = 0;
 io.on('connection', (socket) => {
   socket.emit('updateClientSprites',spriteArray);
   console.log('connection');
@@ -187,7 +193,9 @@ io.on('connection', (socket) => {
         let r2 = rArray[Math.floor(Math.random() * rArray.length)];
         let r3 = rArray[Math.floor(Math.random() * rArray.length)];
         let r4 = rArray[Math.floor(Math.random() * rArray.length)];
-        routes = [r1,r2,r3,r4]
+        routes = [r1,r2,r3,r4];
+        let wr1 = 5 + Math.floor(Math.random() * 2);
+        let wr2 = 7 + Math.floor(Math.random() * 2);
       }
       //console.log(keyArray);
       //if(keyArray[68] == true){
@@ -209,11 +217,25 @@ io.on('connection', (socket) => {
           }
 
         }
-        for(i = 7; i < 12; i++){
-          socket.emit('moveSprite',i,spriteArray[i].x + moveToTarget(spriteArray[i].x,spriteArray[i].y,spriteArray[i-6].x,spriteArray[i-6].y,.15).x,spriteArray[i].y+moveToTarget(spriteArray[i].x,spriteArray[i].y,spriteArray[i-6].x,spriteArray[i-6].y,.15).y);
-          spriteArray[6].x += moveToTarget(spriteArray[i].x,spriteArray[i].y,spriteArray[i-6].x,spriteArray[i-6].y,.15).x;
-          spriteArray[6].y += moveToTarget(spriteArray[i].x,spriteArray[i].y,spriteArray[i-6].x,spriteArray[i-6].y,.15).y;
-      }
+        for(i = 7; i < 11; i++){
+          moveX = moveToTarget(spriteArray[i].x,spriteArray[i].y,spriteArray[i-6].x,spriteArray[i-6].y,.1).x
+          moveY = moveToTarget(spriteArray[i].x,spriteArray[i].y,spriteArray[i-6].x,spriteArray[i-6].y,.1).y
+          socket.emit('moveSprite',i,spriteArray[i].x + moveX,spriteArray[i].y+moveY);
+          spriteArray[i].x += moveX;
+          spriteArray[i].y += moveY;
+        }
+        moveX = moveToTarget(spriteArray[11].x,spriteArray[11].y,spriteArray[wr1].x,spriteArray[wr1].y,.1).x
+        moveY = moveToTarget(spriteArray[11].x,spriteArray[11].y,spriteArray[wr1].x,spriteArray[wr1].y,.1).y
+        socket.emit('moveSprite',11,spriteArray[11].x + moveX,spriteArray[11].y+moveY);
+        spriteArray[11].x += moveX;
+        spriteArray[11].y += moveY;
+
+        moveX = moveToTarget(spriteArray[12].x,spriteArray[12].y,spriteArray[wr2].x,spriteArray[wr2].y,.1).x
+        moveY = moveToTarget(spriteArray[12].x,spriteArray[12].y,spriteArray[wr2].x,spriteArray[wr2].y,.1).y
+        socket.emit('moveSprite',12,spriteArray[12].x + moveX,spriteArray[12].y+moveY);
+        spriteArray[12].x += moveX;
+        spriteArray[12].y += moveY;
+
         if(firstClick){
           if(!ballCatch){
             let tX = 0;
