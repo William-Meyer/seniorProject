@@ -236,6 +236,18 @@ io.on('connection', (socket) => {
         spriteArray[12].x += moveX;
         spriteArray[12].y += moveY;
 
+        moveX = moveToTarget(spriteArray[13].x,spriteArray[13].y,spriteArray[0].x,spriteArray[0].y,.06).x
+        moveY = moveToTarget(spriteArray[13].x,spriteArray[13].y,spriteArray[0].x,spriteArray[0].y,.06).y
+        socket.emit('moveSprite',13,spriteArray[13].x + moveX,spriteArray[13].y+moveY);
+        spriteArray[13].x += moveX;
+        spriteArray[13].y += moveY;
+
+        moveX = moveToTarget(spriteArray[14].x,spriteArray[14].y,spriteArray[0].x,spriteArray[0].y,.1).x
+        moveY = moveToTarget(spriteArray[14].x,spriteArray[14].y,spriteArray[0].x,spriteArray[0].y,.1).y
+        socket.emit('moveSprite',14,spriteArray[14].x + moveX,spriteArray[14].y+moveY);
+        spriteArray[14].x += moveX;
+        spriteArray[14].y += moveY;
+
         if(firstClick){
           if(!ballCatch){
             let tX = 0;
@@ -265,6 +277,12 @@ io.on('connection', (socket) => {
                 break;
               }
             }
+            for(let i = 7; i<15; i++){
+              if(spriteArray[i].isColliding(spriteArray[6].x,spriteArray[6].y,16,16)){
+                hiked = false;
+                break;
+              }
+            }
           }
           else{
             socket.emit('moveSprite',6,spriteArray[ballReciever].x,spriteArray[ballReciever].y);
@@ -273,6 +291,53 @@ io.on('connection', (socket) => {
           }
         }
         playTick++
+      }
+      else{
+        socket.emit('moveSprite',0,pStartX,pStartY + 100);//qb
+        socket.emit('moveSprite',1,pStartX - 300,pStartY);//wr
+        socket.emit('moveSprite',2,pStartX - 150,pStartY + 25);//wr
+        socket.emit('moveSprite',3,pStartX + 150,pStartY);//wr
+        socket.emit('moveSprite',4,pStartX + 300,pStartY);//wr
+        socket.emit('moveSprite',5,pStartX + 50,pStartY + 100);//rb
+        socket.emit('moveSprite',6,pStartX,pStartY + 100);//ball
+        socket.emit('moveSprite',7,pStartX - 300,pStartY - 100);//cb
+        socket.emit('moveSprite',8,pStartX - 150,pStartY - 100);//cb
+        socket.emit('moveSprite',9,pStartX + 150,pStartY - 100);//cb
+        socket.emit('moveSprite',10,pStartX + 300,pStartY - 100);//cb
+        socket.emit('moveSprite',11,pStartX + 250,pStartY - 500);//s1
+        socket.emit('moveSprite',12,pStartX - 250,pStartY - 500);//s1
+        socket.emit('moveSprite',13,pStartX + 150,pStartY - 200);//lb1
+        socket.emit('moveSprite',14,pStartX - 150,pStartY - 200);//lb2
+        spriteArray[0].x = pStartX;
+        spriteArray[1].x = pStartX - 300;
+        spriteArray[2].x = pStartX - 150;
+        spriteArray[3].x = pStartX + 150;
+        spriteArray[4].x = pStartX + 300;
+        spriteArray[5].x = pStartX + 50;
+        spriteArray[6].x = pStartX;
+        spriteArray[7].x = pStartX - 300;
+        spriteArray[8].x = pStartX - 150;
+        spriteArray[9].x = pStartX + 150;
+        spriteArray[10].x = pStartX + 300;
+        spriteArray[11].x = pStartX + 250;
+        spriteArray[12].x = pStartX - 250;
+        spriteArray[13].x = pStartX + 150;
+        spriteArray[14].x = pStartX - 150;
+        spriteArray[0].y = pStartY + 100;
+        spriteArray[1].y = pStartY + 0;
+        spriteArray[2].y = pStartY - 25;
+        spriteArray[3].y = pStartY + 0;
+        spriteArray[4].y = pStartY + 0;
+        spriteArray[5].y = pStartY + 100;
+        spriteArray[6].y = pStartY + 100;
+        spriteArray[7].y = pStartY - 100;
+        spriteArray[8].y = pStartY - 100;
+        spriteArray[9].y = pStartY - 100;
+        spriteArray[10].y = pStartY - 100;
+        spriteArray[11].y = pStartY - 500;
+        spriteArray[12].y = pStartY - 500;
+        spriteArray[12].y = pStartY - 200;
+        spriteArray[12].y = pStartY - 200;
       }
       //console.log('('+ movex + ', '+ movey + ')');
       //game logic end
