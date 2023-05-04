@@ -12,7 +12,10 @@ app.get('/', (req, res) => {
 
 let index = 0;
 const GRAV = 10;
-let keyArray = [];
+let keyArray1 = [];
+let keyArray2 = [];
+let oID = 1;
+let dID = 2;
 let spriteArray = [];
 class Sprite{
    constructor(x,y,h,src,width){
@@ -79,8 +82,6 @@ function moveToTarget(x,y,targetX,targetY,speed){
   if(targetY < y){
     dY -= 2*dY;
   }
-  console.log(dX);
-  console.log(dY);
   return{
     x:dX,
     y:dY
@@ -194,8 +195,8 @@ io.on('connection', (socket) => {
         let r3 = rArray[Math.floor(Math.random() * rArray.length)];
         let r4 = rArray[Math.floor(Math.random() * rArray.length)];
         routes = [r1,r2,r3,r4];
-        let wr1 = 5 + Math.floor(Math.random() * 2);
-        let wr2 = 7 + Math.floor(Math.random() * 2);
+        let wr1 = 1;
+        let wr2 = 3;
       }
       //console.log(keyArray);
       //if(keyArray[68] == true){
@@ -247,7 +248,17 @@ io.on('connection', (socket) => {
         socket.emit('moveSprite',14,spriteArray[14].x + moveX,spriteArray[14].y+moveY);
         spriteArray[14].x += moveX;
         spriteArray[14].y += moveY;
+        if(!ballCatch && !firstClick){
+          if(spriteArray[14].y > spriteArray[0].y -15){
+            hiked = false;
+            console.log('not snapped');
+          }
+          if(spriteArray[13].y > spriteArray[0].y -15){
+            hiked = false;
+            console.log('not snapped');
+          }
 
+        }
         if(firstClick){
           if(!ballCatch){
             let tX = 0;
@@ -334,10 +345,10 @@ io.on('connection', (socket) => {
         spriteArray[8].y = pStartY - 100;
         spriteArray[9].y = pStartY - 100;
         spriteArray[10].y = pStartY - 100;
-        spriteArray[11].y = pStartY - 500;
-        spriteArray[12].y = pStartY - 500;
-        spriteArray[12].y = pStartY - 200;
-        spriteArray[12].y = pStartY - 200;
+        spriteArray[11].y = pStartY - 400;
+        spriteArray[12].y = pStartY - 400;
+        spriteArray[13].y = pStartY - 200;
+        spriteArray[14].y = pStartY - 200;
       }
       //console.log('('+ movex + ', '+ movey + ')');
       //game logic end
@@ -409,8 +420,14 @@ io.on('connection', (socket) => {
   socket.on('move',function(){
     loop();
   });
-  socket.on('setKeys', function(keys){
-    keyArray = keys;
+  socket.on('setKeys', function(keys,Pid){
+    if(Pid = 1){
+      keyArray1 = keys;
+    }
+    if(Pid = 1){
+      keyArray2 = keys;
+    }
+
   });
   socket.on('disconnect', () => {
     io.sockets.emit('updateHeader',"A user as disconnected:Game Over")

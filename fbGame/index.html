@@ -117,7 +117,7 @@
       console.log(evt.clientY - rect.top + (cam.y - cam.wdth/2));
       console.log(evt.clientX - rect.left);
       console.log(evt.clientY - rect.top);
-      socket.emit('cClicked',evt.clientX - rect.left + (cam.getX() - cam.getWidth()/2),evt.clientY - rect.top + (cam.getY() - cam.getHeight()/2))
+      socket.emit('cClicked',evt.clientX - rect.left + (cam.getX() - cam.getWidth()/2),evt.clientY - rect.top + (cam.getY() - cam.getHeight()/2),playerId)
     }
     window.addEventListener("keydown",
       function(e){
@@ -145,7 +145,7 @@
       update();//NOTICE NEEDS TO CHANGE LATER !!RECURSION WARNIN!!
     });
     socket.on('getKeys',function(){
-      socket.emit('setKeys',keyss);
+      socket.emit('setKeys',keyss,playerId);
     });
     //will be cahnged into update loop
 
