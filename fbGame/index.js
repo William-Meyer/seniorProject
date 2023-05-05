@@ -186,7 +186,7 @@ io.on('connection', (socket) => {
         spriteArray[5].y = pStartY + 100;
       }
       socket.emit('getKeys');
-      if(keyArray[68] == true && !(hiked)){
+      if(((keyArray2[68] == true && oID == 2) || (keyArray1[68] == true && oID == 1)) && !(hiked)){
         console.log('snapped')
         hiked = true;
         playTick = 0;
@@ -280,6 +280,8 @@ io.on('connection', (socket) => {
             socket.emit('moveSprite',6,spriteArray[6].x + moveToTarget(qX,qY,tX,tY,.8).x,spriteArray[6].y+moveToTarget(qX,qY,tX,tY,0.8).y);
             spriteArray[6].x += moveToTarget(qX,qY,tX,tY,0.8).x;
             spriteArray[6].y += moveToTarget(qX,qY,tX,tY,0.8).y;
+            console.log('move: ' + moveToTarget(qX,qY,tX,tY,0.8).y);
+            console.log('tick ' + tick);
             for(let i = 1; i < 5; i++){
 
               if(spriteArray[i].isColliding(spriteArray[6].x,spriteArray[6].y,16,16)){
@@ -358,9 +360,15 @@ io.on('connection', (socket) => {
   socket.emit('serverAlert','Hello World!');
   socket.on('cClicked',function(x,y){
     if(!firstClick && hiked){
+      console.log('clickX: ' + x);
+      console.log('clickY: ' + y);
+      console.log('clickTick: ' + tick)
       clickX = x;
       clickY = y;
       firstClick = true;
+    }
+    else{
+      console.log('click tried');
     }
 
   });
@@ -421,10 +429,10 @@ io.on('connection', (socket) => {
     loop();
   });
   socket.on('setKeys', function(keys,Pid){
-    if(Pid = 1){
+    if(Pid == 1){
       keyArray1 = keys;
     }
-    if(Pid = 1){
+    if(Pid == 2){
       keyArray2 = keys;
     }
 

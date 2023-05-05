@@ -114,7 +114,7 @@
     function cClicked(evt){
       var rect = canvas.getBoundingClientRect();
       console.log(cam.getX());
-      console.log(evt.clientY - rect.top + (cam.y - cam.wdth/2));
+      console.log(evt.clientY - rect.top + (cam.getY() - cam.wdth/2));
       console.log(evt.clientX - rect.left);
       console.log(evt.clientY - rect.top);
       socket.emit('cClicked',evt.clientX - rect.left + (cam.getX() - cam.getWidth()/2),evt.clientY - rect.top + (cam.getY() - cam.getHeight()/2),playerId)
