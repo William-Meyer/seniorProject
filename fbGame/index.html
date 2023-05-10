@@ -9,6 +9,11 @@
     <canvas onClick = "cClicked(event)" id="canvas" width="1200" height="675">
       Please use a browser that supports HTML5 Canvas.
     </canvas>
+    <div id="scores">
+      <h2 id = "score1">Player 1: 0</h2>
+      <h2 id = "indicator">Offense: Player 1</h2>
+      <h2 id = "score2">Player 2: 0</h2>
+    </div>
     <img id = "bgImage" src="field2.jpg" alt="">
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
@@ -104,6 +109,18 @@
     socket.on('playerId',function(id){
       playerId = id;
     });
+    socket.on('updateScores',function(s1,s2,oID){
+      console.log('test in scores');
+      console.log('oid: '+oID);
+      document.getElementById('score1').innerHTML = 'Player 1: ' +s1
+      document.getElementById('score2').innerHTML = 'Player 2: ' +s2
+      if(oID == 1){
+        document.getElementById('indicator').innerHTML = 'Offense: Player 1'
+      }
+      else{
+        document.getElementById('indicator').innerHTML = 'Offense: Player 2'
+      }
+    });
     socket.on('startGame',function(){
       console.log('game starting')
       document.getElementById('out').innerHTML = 'Game has Started';
@@ -113,10 +130,10 @@
     var keys = [];
     function cClicked(evt){
       var rect = canvas.getBoundingClientRect();
-      console.log(cam.getX());
-      console.log(evt.clientY - rect.top + (cam.getY() - cam.wdth/2));
-      console.log(evt.clientX - rect.left);
-      console.log(evt.clientY - rect.top);
+      //console.log(cam.getX());
+      //console.log(evt.clientY - rect.top + (cam.getY() - cam.wdth/2));
+      //console.log(evt.clientX - rect.left);
+      //console.log(evt.clientY - rect.top);
       socket.emit('cClicked',evt.clientX - rect.left + (cam.getX() - cam.getWidth()/2),evt.clientY - rect.top + (cam.getY() - cam.getHeight()/2),playerId)
     }
     window.addEventListener("keydown",

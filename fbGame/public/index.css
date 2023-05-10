@@ -13,3 +13,18 @@ canvas{
 h1{
   text-align: center;
 }
+#scores{
+
+}
+#score1{
+    display:inline;
+  text-align: left;
+}
+#score2{
+    display:inline;
+  text-align: right;
+}
+#indeicator{
+    display:inline;
+  text-align: center;
+}

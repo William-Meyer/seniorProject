@@ -169,6 +169,8 @@ let wr2 = 0;
 let hasMoved = false;
 let moveCount = 0;
 let ballRun = 0;
+let score1 = 0;
+let score2 = 0;
 io.on('connection', (socket) => {
   socket.emit('updateClientSprites',spriteArray);
   console.log('connection');
@@ -212,6 +214,15 @@ io.on('connection', (socket) => {
         ballRun = ballRun + 1;
       }
       if(ballRun > 100){
+        if(oID == 1){
+          oID = 2;
+          dID = 1;
+        }
+        else{
+          oID = 1;
+          dID = 2;
+        }
+        socket.emit('updateScores',score1,score2,oID);
         hiked = false;
       }
       if(hiked){
@@ -229,7 +240,7 @@ io.on('connection', (socket) => {
           }
 
         }
-        if(oID = 1){
+        if(oID == 1){
           if(keyArray2[65-65] == true){
             spriteArray[7].x -= .12;
           }
@@ -294,10 +305,28 @@ io.on('connection', (socket) => {
 
         if(!ballCatch && !firstClick){
           if(spriteArray[14].y > spriteArray[0].y -15){
+            if(oID == 1){
+              oID = 2;
+              dID = 1;
+            }
+            else{
+              oID = 1;
+              dID = 2;
+            }
+            socket.emit('updateScores',score1,score2,oID);
             hiked = false;
             console.log('not snapped');
           }
           if(spriteArray[13].y > spriteArray[0].y -15){
+            if(oID == 1){
+              oID = 2;
+              dID = 1;
+            }
+            else{
+              oID = 1;
+              dID = 2;
+            }
+            socket.emit('updateScores',score1,score2,oID);
             hiked = false;
             console.log('not snapped');
           }
@@ -322,17 +351,31 @@ io.on('connection', (socket) => {
               tY = qY+(qY - clickY);
             }
             if(spriteArray[6].x < 0 || spriteArray[6].x > 1500 || spriteArray[6].y < 500 || spriteArray[6].y > 3000){
+              if(oID == 1){
+                oID = 2;
+                dID = 1;
+              }
+              else{
+                oID = 1;
+                dID = 2;
+              }
+              socket.emit('updateScores',score1,score2,oID);
               hiked = false;
             }
             socket.emit('moveSprite',6,spriteArray[6].x + moveToTarget(qX,qY,tX,tY,.8).x,spriteArray[6].y+moveToTarget(qX,qY,tX,tY,0.8).y);
             spriteArray[6].x += moveToTarget(qX,qY,tX,tY,0.8).x;
             spriteArray[6].y += moveToTarget(qX,qY,tX,tY,0.8).y;
-            console.log('move: ' + moveToTarget(qX,qY,tX,tY,0.8).y);
-            console.log('tick ' + tick);
             for(let i = 1; i < 5; i++){
 
               if(spriteArray[i].isColliding(spriteArray[6].x,spriteArray[6].y,16,16)){
                 ballCatch = true;
+                if(oID == 1){
+                  score1 += 1;
+                }
+                else if(oID == 2){
+                  score2 +=1;
+                }
+                console.log('ball cot score 1: ' + score1 + ' score2: ' + score2);
                 ballReciever = i;
                 break;
               }
@@ -347,6 +390,7 @@ io.on('connection', (socket) => {
                   oID = 1;
                   dID = 2;
                 }
+                socket.emit('updateScores',score1,score2,oID);
                 hiked = false;
                 break;
               }
@@ -361,6 +405,7 @@ io.on('connection', (socket) => {
         playTick++
       }
       else{
+        socket.emit('updateScores',score1,score2,oID);
         socket.emit('startSprites');
         ballRun = 0;
           r1 = [];
@@ -426,6 +471,8 @@ io.on('connection', (socket) => {
       firstClick = true;
     }
     else{
+      console.log('oid: '+oID)
+      console.log('pid: '+pID)
       console.log('click tried');
     }
 
